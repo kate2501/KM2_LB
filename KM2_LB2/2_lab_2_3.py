@@ -88,14 +88,14 @@ def merge_2_files(file1, file2):
     os.remove(file1)
     os.remove(file2)
     return filename
+    
+def main():
+    out = split_file("file.txt")
+    sort_files(out)
+    merge_files(out)
 
-out = split_file("file.txt")
-sort_files(out)
-#op =  open(merge_2_files("outFile2.txt","outFile3.txt"))
-#op.close()
 
-
-merge_files(out)
-
+if __name__ == "__main__":
+    main()
 
 

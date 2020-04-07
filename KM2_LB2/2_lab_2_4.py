@@ -1,5 +1,3 @@
-__all__ = ['flatten']
-
 def flatten_it(obj):
     if isinstance(obj, list):
         tmp = []

@@ -20,8 +20,8 @@ def to_json(obj):
 def int_to_string(i):
     string = ''
     while True:
-        i, remainder = divmod(i, 10)
-        string = chr(ord('0') + remainder) + string
+        i, rem = divmod(i, 10)
+        string = chr(ord('0') + rem) + string
         if i == 0:
             break
     return string
@@ -79,7 +79,7 @@ def float_to_string(flt):
     return to_json(whole) + '.' + to_json(int(frac))
 
 
-def single_dict_to_string(dic):
+def dict_to_string(dic):
     string = ''
     for key, value in dic.items():
         if isinstance(key, (int, bool, str, float)) or (key is None):
@@ -93,25 +93,7 @@ def single_dict_to_string(dic):
     return '{' + string[:-2]+ '}'
 
 
-def dict_to_string(dic):
-    string = ''
-    if check_if_lists(dic):
-        for key, value in dic.items():
-            if isinstance(key, (int, bool, str, float)) or (key is None):
-                if isinstance(key, str):
-                    string += to_json(key) + ': '
-                else:
-                    string += str_to_string(to_json(key))
-                if check_if_lists(value):
-                    string += to_json(value) + ', '
-            else:
-                raise ValueError
-        return '{' + string[:-2]+ '}'
-    if isinstance(dic, (dict)):
-        return single_dict_to_string(dic)
-    return to_json(dic)
-
 #print(list(float(0.99999999999999999)))
-print([to_json(0.999999)])
+print([to_json(([{'h':{1:2}}, (3, [4,5])], [1, {3:(3,4)}]))])
 
 
