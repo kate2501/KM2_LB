@@ -1,3 +1,5 @@
+import argparse
+
 def from_json(obj):    
     obj = obj.strip()
     if obj[0] == "[" and obj[-1] == "]":
@@ -12,7 +14,10 @@ def from_json(obj):
         return False
     if obj == 'null':
         return
-    return json_to_string(obj)
+    if obj.count('.') <= 1 and obj.count('e') <=1:
+        return float(obj)
+    if obj[0] == '"' and obj[-1] == '"':
+        return json_to_string(obj)
     raise ValueError
     
 def json_to_int(i):
@@ -90,15 +95,22 @@ def json_to_dict(dic):
     fin_dict = {json_to_string(dic[1:r]): t}
     return fin_dict
 
-def json_to_float(fl):
-    num = 0
-    if fl.count('.') == 1:
-        p = fl.find('.')
-        num += json_to_int(fl[:p])
-        fr = fl[p+1:]
-        num += (json_to_int(fr)/(len(fr)+1)*10)
-    return num,json_to_int(fl[:p]), fr
+def main():
+    parser = argparse.ArgumentParser(description='Inp.file name')
+    parser.add_argument('-f',  
+        help='Your file')
+    args = parser.parse_args()
+    try:
+        if args.f:
+            file = args.f
+            file_f = open(file)
+            file_d = "".join(file_f.readlines())
+            file_f.close()
+            print(from_json(file_d))
+        else:
+            raise FileNotFoundError
+    except FileNotFoundError:
+        print("Your file wasn't found. Try again")
 
-
-print(from_json('[1,false, {"1":[null, [{"2":1},5]},1, [[2,3],true], 7]'))
-print([json_to_float('3.888')])
+if __name__ == "__main__":
+    main()

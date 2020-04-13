@@ -1,5 +1,22 @@
 import os
 import uuid 
+import argparse
+import sys
+
+def drawProgressBar(percent, barLen = 20):
+    sys.stdout.write("\r")
+    progress = ""
+    for i in range(barLen):
+        if i < int(barLen * percent):
+            progress += "="
+        else:
+            progress += " "
+    sys.stdout.write("[ %s ] %.0f%%" % (progress, percent * 100))
+    sys.stdout.flush()
+
+def update(pr):
+    sys.stdout.write("\r")
+    drawProgressBar(pr/192)
 
 def file_len(fname):
     with open(fname) as f:
@@ -8,19 +25,21 @@ def file_len(fname):
     return i + 1
 
 def split_file(filename):
-    i = 0
-    [open("outFile%d.txt" % i, "a") for i in range(16)]
-    with open(filename) as f:
-        while True:
-            buf = f.readline()
-            if not buf:
-                break
-            k = i%16
-            out = open("outFile%d.txt" % k, "a")
-            out.write(buf)
-            out.close()
-            i += 1
-    return ["outFile%d.txt" % k for k in range(16)]
+    i, s =0, file_len(filename)
+    f = open(filename)
+    out = [open("outFile%d.txt" % k, "a") for k in range(64)]
+    while True:
+        buf = f.readline()
+        if not buf:
+            break
+        k = i%64
+        out[k].write(buf)
+        i += 1
+        update(i/s*64)
+    f.close()
+    for k in range(64):
+        out[k].close
+    return ["outFile%d.txt" % k for k in range(64)]
 
 def merge(a,b):
     c = []
@@ -45,7 +64,7 @@ def merge_sort(a):
     left, right = merge_sort(a[:mid]), merge_sort(a[mid:])
     return merge(left, right)
 
-def sort_file(filename):
+def sort_file(filename, s):
     with open(filename, 'r') as file :
         filedata = file.readlines()
     with open(filename, "w") as f:
@@ -58,14 +77,17 @@ def sort_file(filename):
         f.write(''.join(merge_sort(filedata)))
 
 def sort_files(out):
-    for i in range(16):
-        sort_file(out[i])
+    for i in range(64):
+        sort_file(out[i], i)
+        update(i+64+i/64)
 
 def merge_files(out):
     result = out[0]
-    for i in range(1, 16):
+    for i in range(1, 64):
         result = merge_2_files(result, out[i])
+        update(i+128 + i/127)
     os.rename(result, "outfile.txt")
+
 
 def merge_2_files(file1, file2):
     filename = str(uuid.uuid1())
@@ -90,7 +112,18 @@ def merge_2_files(file1, file2):
     return filename
     
 def main():
-    out = split_file("file.txt")
+    parser = argparse.ArgumentParser(description='Inp.file name')
+    parser.add_argument('-f',  
+        help='Your file')
+    args = parser.parse_args()
+    try:
+        if args.f:
+            file = args.f
+        else:
+            raise FileNotFoundError
+    except FileNotFoundError:
+        print("Your file wasn't found. Try again")
+    out = split_file(file)
     sort_files(out)
     merge_files(out)
 

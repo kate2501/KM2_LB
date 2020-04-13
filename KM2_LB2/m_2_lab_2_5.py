@@ -1,21 +1,25 @@
 import math
 
-def to_json(obj):
-    if isinstance(obj, bool):
-        return bool_to_string(obj)
-    if obj is None:
-        return none_to_string()
-    if isinstance(obj, int):
-        return int_to_string(obj)
-    if isinstance(obj, float):
-        return float_to_string(obj)
-    if isinstance(obj, str):
-        return str_to_string(obj)
-    if isinstance(obj, (list, tuple)):
-        return array_to_string(obj)
-    if isinstance(obj, dict):
-        return dict_to_string(obj)
-    raise ValueError
+def to_json(obj, file=' '):
+    if file == ' ':
+        if isinstance(obj, bool):
+            return bool_to_string(obj)
+        if obj is None:
+            return none_to_string()
+        if isinstance(obj, int):
+            return int_to_string(obj)
+        if isinstance(obj, float):
+            return str(obj)
+        if isinstance(obj, str):
+            return str_to_string(obj)
+        if isinstance(obj, (list, tuple)):
+            return array_to_string(obj)
+        if isinstance(obj, dict):
+            return dict_to_string(obj)
+        raise ValueError
+    else:
+        with open(file, "a") as f:
+            f.write(to_json(obj, ' '))
 
 def int_to_string(i):
     string = ''
@@ -65,20 +69,6 @@ def array_to_string(lst):
         return single_array_to_string(lst)
     return to_json(lst)
     
- 
-def float_to_string(flt):
-    new_flt = math.modf(float(flt))
-    '''frac = int(new_flt[0]*(10**16))
-    while True:
-        if frac%10 == 0:
-            frac = frac / 10
-        else:
-            break
-    whole = int(new_flt[1])'''
-
-    return to_json(whole) + '.' + to_json(int(frac))
-
-
 def dict_to_string(dic):
     string = ''
     for key, value in dic.items():
@@ -92,8 +82,9 @@ def dict_to_string(dic):
             raise ValueError
     return '{' + string[:-2]+ '}'
 
+def main():
+    to_json(([{'h':{1:2}}, (3.5, [4,5])], [1, {3:(3.9,4)}]), 'file.txt')
 
-#print(list(float(0.99999999999999999)))
-print([to_json(([{'h':{1:2}}, (3, [4,5])], [1, {3:(3,4)}]))])
-
+if __name__ == "__main__":
+    main()
 

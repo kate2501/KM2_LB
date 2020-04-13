@@ -53,7 +53,7 @@ def main():
     parser = argparse.ArgumentParser(description='Input from cmd')
     parser.add_argument('-f',  
         help='File at the end')
-    parser.add_argument('-mb',  
+    parser.add_argument('-mb',type=float,   
         help='Numb. mbs')
     parser.add_argument('-w', nargs=2, type=int,  
         help='Numb. words in line(2 arg.)')

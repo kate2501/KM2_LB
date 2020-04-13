@@ -54,7 +54,7 @@ def sqrt_decomp(a, l, r):
 def main():
     parser = argparse.ArgumentParser(description='Input from file')
     parser.add_argument('-f', type=str, help='Open file')
-    args=parser.parse_args()
+    args = parser.parse_args()
     if args.f:
         try:
             tmp = []
